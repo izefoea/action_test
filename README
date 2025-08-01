@@ -1,1 +1,39 @@
-?
+# PRChecker Action
+
+A GitHub Action to automatically validate that a pull request is ready to be merged. This action enforces common and project-specific contribution policies, ensuring that only high-quality, fully-vetted PRs enter your codebase.
+
+It acts as a powerful gatekeeper for your repository, checking everything from review approvals to CI status before giving the green light.
+
+## Core Features
+
+✅ **Advanced Review Policy Enforcement**: Verifies that a PR has the required number of approvals and no outstanding change requests. It understands complex, time-based merging rules (e.g., waiting 24 hours for a second approval, or 7 days for a single approval) and has special handling for project-specific labels like `fast-track`, `semver-major`, and TSC member approvals.
+
+✅ **Comprehensive CI Status Checks**: Validates the status of CI pipelines from multiple providers. It has built-in support for native GitHub Actions and can be configured to check Jenkins build results via its API, ensuring that all required tests have passed on the latest commit.
+
+✅ **Merge Readiness Validation**: Ensures the PR is not already closed or merged and checks for any merge conflicts with the base branch, preventing broken merges.
+
+✅ **Contributor & Commit Hygiene**: Helps maintain a clean and verifiable commit history. It checks if commit authors are properly linked to a GitHub account and can alert on commits from new contributors whose emails don't match the PR author's, which is crucial for DCO/CLA compliance. This check is performed using standard Git commit metadata.
+
+## Usage
+
+Add the following step to your GitHub Actions workflow file (e.g., `.github/workflows/main.yml`):
+
+```yaml
+name: Check PR Readiness
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+
+jobs:
+  pr-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run PR Checker
+        uses: your-org/prchecker-action@v1
+        with:
+          # The GITHUB_TOKEN is required to access the GitHub API
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Optional: specify CI provider if not using the default
+          # ci-type: 'jenkins'
