@@ -1,6 +1,6 @@
 name: "PR Checker"
 description: "Run PRChecker to enforce Node.js PR policies"
-author: "你的名字 <you@example.com>"
+author: "<izefoea@gmail.com>"
 inputs:
   github-token:
     description: "GitHub token for API access"
