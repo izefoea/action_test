@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Octokit } from '@octokit/rest';
-import PRChecker from './pr_checker.js';  // adjust path as needed
+import PRChecker from './pr_checker.js';
 
 async function main() {
   const argv = require('yargs')
@@ -29,8 +29,6 @@ async function main() {
     comments:      commentsRes.data,
     commits:       commitsRes.data,
     collaborators: new Map(collabsRes.data.map(u => [u.login, u])),
-    authorIsNew:   () => {/* your logic, or prRes.data.author_association === 'NONE' */},
-    getThread:     () => {/* return whatever JobParser.parse() needs */},
   };
 
   // 4. Instantiate and run checks
