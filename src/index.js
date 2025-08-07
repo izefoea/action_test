@@ -14,10 +14,11 @@ async function main() {
   const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
   // 2. Fetch PR data
-  const [prRes, reviewsRes, commentsRes, commitsRes, collabsRes] = await Promise.all([
+  const [prRes, reviewersRes, commentsRes, reviewsRes, commitsRes, collabsRes] = await Promise.all([
     octokit.pulls.get({ owner: argv.owner, repo: argv.repo, pull_number: argv.pr }),
-    octokit.pulls.listReviews({ owner: argv.owner, repo: argv.repo, pull_number: argv.pr }),
+    octokit.pulls.listReviewers({ owner: argv.owner, repo: argv.repo, pull_number: argv.pr }),
     octokit.issues.listComments({ owner: argv.owner, repo: argv.repo, issue_number: argv.pr }),
+    octokit.pulls.listReviews({ owner: argv.owner, repo: argv.repo, pull_number: argv.pr }),
     octokit.pulls.listCommits({ owner: argv.owner, repo: argv.repo, pull_number: argv.pr }),
     octokit.repos.listCollaborators({ owner: argv.owner, repo: argv.repo })
   ]);
@@ -25,8 +26,9 @@ async function main() {
   // 3. Shape the `data` object to match what PRChecker expects
   const data = {
     pr:            { /* map prRes.data */ },
-    reviews:       reviewsRes.data,
+    reviewers:     reviewersRes.data,
     comments:      commentsRes.data,
+    reviews:       reviewsRes.data,
     commits:       commitsRes.data,
     collaborators: new Map(collabsRes.data.map(u => [u.login, u])),
   };
